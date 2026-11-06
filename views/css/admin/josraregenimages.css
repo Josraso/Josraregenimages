@@ -1,0 +1,123 @@
+#josra-regenimages-panel .form-group {
+    margin-bottom: 18px;
+}
+
+/* cuerpo con margen interior: en PrestaShop 8/9 el panel no lo da y el contenido quedaba pegado al borde */
+#josra-regenimages-panel .josra-body {
+    padding: 0 20px 20px;
+}
+
+/* rejilla propia (sin .row: sus márgenes negativos sacaban las tarjetas del panel) */
+#josra-regenimages-panel .josra-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 16px;
+    margin-top: 12px;
+}
+
+#josra-regenimages-panel .josra-entity-card {
+    border: 1px solid #dfe3e8;
+    border-radius: 4px;
+    background: #fff;
+}
+
+#josra-regenimages-panel .josra-card-heading {
+    font-weight: bold;
+    padding: 10px 14px;
+    border-bottom: 1px solid #dfe3e8;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+}
+
+#josra-regenimages-panel .josra-card-heading .badge {
+    background-color: #5cb85c;
+    color: #fff;
+    font-weight: normal;
+    white-space: nowrap;
+}
+
+#josra-regenimages-panel .josra-card-body {
+    padding: 10px 14px;
+}
+
+#josra-regenimages-panel .josra-card-body .checkbox {
+    margin: 0 0 6px;
+}
+
+#josra-regenimages-panel .josra-card-body .checkbox label {
+    font-weight: normal;
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    padding-left: 0;
+    margin: 0;
+    cursor: pointer;
+}
+
+#josra-regenimages-panel .josra-card-body .checkbox input[type=checkbox] {
+    position: static;
+    margin: 0;
+}
+
+#josra-estimate {
+    font-size: 13px;
+}
+
+#josra-force-warning {
+    font-size: 13px;
+}
+
+#josra-log-wrapper,
+#josra-error-log {
+    margin-top: 20px;
+}
+
+#josra-log-content,
+#josra-error-log-content {
+    max-height: 220px;
+    overflow-y: auto;
+    font-size: 12px;
+    background: #f9f9f9;
+    border: 1px solid #ddd;
+    padding: 8px;
+    font-family: Consolas, Monaco, monospace;
+}
+
+#josra-log-content div,
+#josra-error-log-content div {
+    padding: 2px 0;
+    border-bottom: 1px solid #eee;
+}
+
+#josra-log-content div.josra-log-ok {
+    color: #3c763d;
+}
+
+#josra-log-content div.josra-log-error {
+    color: #a94442;
+}
+
+#josra-finished-banner {
+    font-size: 14px;
+}
+
+#josra-progress-wrapper {
+    margin-top: 20px;
+}
+
+#josra-progress-text {
+    margin-top: 6px;
+    font-weight: bold;
+}
+
+#josra-error-log {
+    margin-top: 20px;
+}
+
+#josra-error-log-content div {
+    padding: 2px 0;
+    border-bottom: 1px solid #eee;
+    color: #a94442;
+}
