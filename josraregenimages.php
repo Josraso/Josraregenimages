@@ -23,7 +23,7 @@ class JosraRegenImages extends Module
     {
         $this->name = 'josraregenimages';
         $this->tab = 'administration';
-        $this->version = '1.3.3';
+        $this->version = '1.3.4';
         $this->author = 'José Ramón Guzmán Sobrino';
         $this->need_instance = 0;
         $this->bootstrap = true;
