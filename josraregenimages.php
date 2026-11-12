@@ -13,6 +13,7 @@ if (!defined('_PS_VERSION_')) {
 
 require_once dirname(__FILE__) . '/classes/JosraRegenImagesQueue.php';
 require_once dirname(__FILE__) . '/classes/JosraRegenImagesRenderer.php';
+require_once dirname(__FILE__) . '/classes/JosraregenimagesUpdater.php';
 
 class JosraRegenImages extends Module
 {
@@ -22,7 +23,7 @@ class JosraRegenImages extends Module
     {
         $this->name = 'josraregenimages';
         $this->tab = 'administration';
-        $this->version = '1.3.1';
+        $this->version = '1.3.2';
         $this->author = 'José Ramón Guzmán Sobrino';
         $this->need_instance = 0;
         $this->bootstrap = true;
@@ -38,13 +39,36 @@ class JosraRegenImages extends Module
         $this->confirmUninstall = $this->l('¿Seguro? Se eliminará la tabla de cola interna (no afecta a las imágenes ya generadas en el servidor).');
     }
 
+    public function getUpdater()
+    {
+        return new JosraregenimagesUpdater($this);
+    }
+
+    /** Aviso periódico al servidor de actualizaciones (solo en el back-office) */
+    public function hookActionAdminControllerSetMedia($params)
+    {
+        $this->getUpdater()->maybePing();
+    }
+
+    /** PS 8.1+: la versión nueva aparece en Gestor de módulos > Actualizaciones */
+    public function hookActionListModules($params)
+    {
+        return $this->getUpdater()->getNativeModuleList();
+    }
+
     public function install()
     {
-        return parent::install() && $this->createQueueTable();
+        return parent::install() && $this->createQueueTable() && $this->getUpdater()->registerHooks();
     }
 
     public function uninstall()
     {
+        $this->getUpdater()->notifyUninstall();
+        Configuration::deleteByName('JOSRAREGENIMAGES_UPD_TS');
+        Configuration::deleteByName('JOSRAREGENIMAGES_UPD_INFO');
+        Configuration::deleteByName('JOSRAREGENIMAGES_UPD_SU');
+        Configuration::deleteByName('JOSRAREGENIMAGES_UPD_LT');
+
         return $this->dropQueueTable() && parent::uninstall();
     }
 
@@ -89,7 +113,9 @@ class JosraRegenImages extends Module
             exit;
         }
 
-        $output = '';
+        // Servidor de actualizaciones: botones del panel, hooks y upgrades pendientes
+        $updater = $this->getUpdater();
+        $output = $updater->processRequest();
 
         // Guardado de preferencias por defecto del formulario (batch size, etc.)
         if (Tools::isSubmit('submitJosraRegenImagesSave')) {
@@ -108,7 +134,15 @@ class JosraRegenImages extends Module
         $this->context->controller->addJS($this->_path . 'views/js/admin/josraregenimages.js');
         $this->context->controller->addCSS($this->_path . 'views/css/admin/josraregenimages.css');
 
-        return $output . $this->renderForm() . $this->renderQualityForm();
+        $forms = $this->renderForm() . $this->renderQualityForm();
+
+        // Panel de actualizaciones: arriba si hay versión nueva, abajo si no
+        $info = $updater->getInfo();
+        $panel = $updater->renderPanel();
+
+        return !empty($info['update_available'])
+            ? $output . $panel . $forms
+            : $output . $forms . $panel;
     }
 
     /** Ajustes del generador propio (formulario nativo) */
